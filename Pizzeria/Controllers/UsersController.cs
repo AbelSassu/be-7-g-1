@@ -15,14 +15,14 @@ namespace Pizzeria.Controllers
         private DBContext db = new DBContext();
 
         // GET: Users
-        [Authorize(Roles = "Ammistratore")]
+        [Authorize(Roles = "Amministratore")]
         public ActionResult Index()
         {
             return View(db.Users.ToList());
         }
 
         // GET: Users/Details/5
-        [Authorize(Roles = "Cliente, Ammistratore")]
+        [Authorize(Roles = "Cliente, Amministratore")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -38,7 +38,7 @@ namespace Pizzeria.Controllers
         }
 
         // GET: Users/Create
-        [Authorize(Roles = "Ammistratore")]
+        [Authorize(Roles = "Amministratore")]
         public ActionResult Create()
         {
             return View();
@@ -49,7 +49,7 @@ namespace Pizzeria.Controllers
         // Per altri dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Ammistratore")]
+        [Authorize(Roles = "Amministratore")]
         public ActionResult Create([Bind(Include = "User_ID,Nome,Cognome,Email,Password,Ruolo")] Users users)
         {
             if (ModelState.IsValid)
@@ -63,7 +63,7 @@ namespace Pizzeria.Controllers
         }
 
         // GET: Users/Edit/5
-        [Authorize(Roles = "Cliente, Ammistratore")]
+        [Authorize(Roles = "Cliente, Amministratore")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -83,7 +83,7 @@ namespace Pizzeria.Controllers
         // Per altri dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Cliente, Ammistratore")]
+        [Authorize(Roles = "Cliente, Amministratore")]
         public ActionResult Edit([Bind(Include = "User_ID,Nome,Cognome,Email,Password,Ruolo")] Users users)
         {
             if (ModelState.IsValid)

@@ -22,13 +22,13 @@
                     <li>@Html.ActionLink("Ordini", "Index", "Ordini", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("API", "Index", "Help", new { area = "" }, new { @class = "nav-link" })</li>
                 </ul>
-                <ul>
+                <ul class="text-white">
                     @if (User.Identity.IsAuthenticated)
                     { 
-                       <li>@Html.ActionLink("Ordini", "Logout", "Auth", new { area = "" }, new { @class = "nav-link" })</li>
+                       <li>@Html.ActionLink("Logout", "Logout", "Auth", new { area = "" }, new { @class = "nav-link" })</li>
                     } else 
                     {
-                       <li>@Html.ActionLink("Ordini", "Login", "Auth", new { area = "" }, new { @class = "nav-link" })</li>
+                       <li>@Html.ActionLink("Login", "Login", "Auth", new { area = "" }, new { @class = "nav-link" })</li>
                     }
                 </ul>
             </div>

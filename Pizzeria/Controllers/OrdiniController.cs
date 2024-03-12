@@ -15,7 +15,7 @@ namespace Pizzeria.Controllers
         private DBContext db = new DBContext();
 
         // GET: Ordini
-        [Authorize(Roles = "Ammistratore")]
+        [Authorize(Roles = "Amministratore")]
         public ActionResult Index()
         {
             var ordini = db.Ordini.Include(o => o.Users);
@@ -23,7 +23,7 @@ namespace Pizzeria.Controllers
         }
 
         // GET: Ordini/Details/5
-        [Authorize(Roles = "Cliente, Ammistratore")]
+        [Authorize(Roles = "Cliente, Amministratore")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -39,7 +39,7 @@ namespace Pizzeria.Controllers
         }
 
         // GET: Ordini/Create
-        [Authorize(Roles = "Cliente, Ammistratore")]
+        [Authorize(Roles = "Cliente, Amministratore")]
         public ActionResult Create()
         {
             ViewBag.User_ID = new SelectList(db.Users, "User_ID", "Nome");
@@ -66,7 +66,7 @@ namespace Pizzeria.Controllers
         }
 
         // GET: Ordini/Edit/5
-        [Authorize(Roles = "Ammistratore")]
+        [Authorize(Roles = "Amministratore")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -86,7 +86,7 @@ namespace Pizzeria.Controllers
         // Per la protezione da attacchi di overposting, abilitare le proprietà a cui eseguire il binding. 
         // Per altri dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [Authorize(Roles = "Ammistratore")]
+        [Authorize(Roles = "Amministratore")]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Ordine_ID,Indirizzo,Note,CostoCons,User_ID")] Ordini ordini)
         {
@@ -101,7 +101,7 @@ namespace Pizzeria.Controllers
         }
 
         // GET: Ordini/Delete/5
-        [Authorize(Roles = "Ammistratore")]
+        [Authorize(Roles = "Amministratore")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -118,7 +118,7 @@ namespace Pizzeria.Controllers
 
         // POST: Ordini/Delete/5
         [HttpPost, ActionName("Delete")]
-        [Authorize(Roles = "Ammistratore")]
+        [Authorize(Roles = "Amministratore")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
