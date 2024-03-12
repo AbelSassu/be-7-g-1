@@ -10,19 +10,18 @@ using Pizzeria.Models;
 
 namespace Pizzeria.Controllers
 {
-    public class OrdiniController : Controller
+    public class UsersController : Controller
     {
         private DBContext db = new DBContext();
 
-        // GET: Ordini
+        // GET: Users
         [Authorize(Roles = "Ammistratore")]
         public ActionResult Index()
         {
-            var ordini = db.Ordini.Include(o => o.Users);
-            return View(ordini.ToList());
+            return View(db.Users.ToList());
         }
 
-        // GET: Ordini/Details/5
+        // GET: Users/Details/5
         [Authorize(Roles = "Cliente, Ammistratore")]
         public ActionResult Details(int? id)
         {
@@ -30,100 +29,96 @@ namespace Pizzeria.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Ordini ordini = db.Ordini.Find(id);
-            if (ordini == null)
+            Users users = db.Users.Find(id);
+            if (users == null)
             {
                 return HttpNotFound();
             }
-            return View(ordini);
+            return View(users);
         }
 
-        // GET: Ordini/Create
-        [Authorize(Roles = "Cliente, Ammistratore")]
+        // GET: Users/Create
+        [Authorize(Roles = "Ammistratore")]
         public ActionResult Create()
         {
-            ViewBag.User_ID = new SelectList(db.Users, "User_ID", "Nome");
             return View();
         }
 
-        // POST: Ordini/Create
+        // POST: Users/Create
         // Per la protezione da attacchi di overposting, abilitare le proprietà a cui eseguire il binding. 
         // Per altri dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [Authorize(Roles = "Cliente, Amministratore" )]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Ordine_ID,Indirizzo,Note,CostoCons,User_ID")] Ordini ordini)
+        [Authorize(Roles = "Ammistratore")]
+        public ActionResult Create([Bind(Include = "User_ID,Nome,Cognome,Email,Password,Ruolo")] Users users)
         {
             if (ModelState.IsValid)
             {
-                db.Ordini.Add(ordini);
+                db.Users.Add(users);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.User_ID = new SelectList(db.Users, "User_ID", "Nome", ordini.User_ID);
-            return View(ordini);
+            return View(users);
         }
 
-        // GET: Ordini/Edit/5
-        [Authorize(Roles = "Ammistratore")]
+        // GET: Users/Edit/5
+        [Authorize(Roles = "Cliente, Ammistratore")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Ordini ordini = db.Ordini.Find(id);
-            if (ordini == null)
+            Users users = db.Users.Find(id);
+            if (users == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.User_ID = new SelectList(db.Users, "User_ID", "Nome", ordini.User_ID);
-            return View(ordini);
+            return View(users);
         }
 
-        // POST: Ordini/Edit/5
+        // POST: Users/Edit/5
         // Per la protezione da attacchi di overposting, abilitare le proprietà a cui eseguire il binding. 
         // Per altri dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [Authorize(Roles = "Ammistratore")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Ordine_ID,Indirizzo,Note,CostoCons,User_ID")] Ordini ordini)
+        [Authorize(Roles = "Cliente, Ammistratore")]
+        public ActionResult Edit([Bind(Include = "User_ID,Nome,Cognome,Email,Password,Ruolo")] Users users)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(ordini).State = EntityState.Modified;
+                db.Entry(users).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.User_ID = new SelectList(db.Users, "User_ID", "Nome", ordini.User_ID);
-            return View(ordini);
+            return View(users);
         }
 
-        // GET: Ordini/Delete/5
-        [Authorize(Roles = "Ammistratore")]
+        // GET: Users/Delete/5
+        [Authorize(Roles = "Cliente")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Ordini ordini = db.Ordini.Find(id);
-            if (ordini == null)
+            Users users = db.Users.Find(id);
+            if (users == null)
             {
                 return HttpNotFound();
             }
-            return View(ordini);
+            return View(users);
         }
 
-        // POST: Ordini/Delete/5
+        // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
-        [Authorize(Roles = "Ammistratore")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Cliente")]
         public ActionResult DeleteConfirmed(int id)
         {
-            Ordini ordini = db.Ordini.Find(id);
-            db.Ordini.Remove(ordini);
+            Users users = db.Users.Find(id);
+            db.Users.Remove(users);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
