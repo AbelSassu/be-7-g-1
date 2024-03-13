@@ -264,7 +264,6 @@
     <Content Include="Views\OrdArts\Create.cshtml" />
     <Content Include="Views\OrdArts\Delete.cshtml" />
     <Content Include="Views\OrdArts\Details.cshtml" />
-    <Content Include="Views\OrdArts\Edit.cshtml" />
     <Content Include="Views\OrdArts\Index.cshtml" />
     <Content Include="Views\Auth\Login.cshtml" />
   </ItemGroup>
