@@ -50,20 +50,20 @@ namespace Pizzeria.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "User_ID,Nome,Cognome,Email,Password,Ruolo")] Users users)
         {
-            var userDb = db.Users.Where(u => u.Email == users.Email).FirstOrDefault();
-
             if (ModelState.IsValid)
             {
+                var userDb = db.Users.FirstOrDefault(u => u.Email == users.Email);
+
                 if (userDb == null)
                 {
                     db.Users.Add(users);
                     db.SaveChanges();
                     TempData["message"] = "Account creato con successo";
-                    return RedirectToAction("Details", new { id = users.User_ID });
+                    return RedirectToAction("Login", "Auth");
                 }
                 else
                 {
-                    TempData["message"] = "Account già presente nel database";
+                    TempData["message"] = "L'email esiste già";
                     return View(users);
                 }
             }

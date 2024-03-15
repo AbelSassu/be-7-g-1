@@ -1,54 +1,53 @@
 ﻿@model IEnumerable<Pizzeria.Models.Ordini>
 
 @{
-    ViewBag.Title = "Ordini attivi";
+    ViewBag.Title = "Index";
 }
 
-<h1 class="text-center my-4">Ordini attivi</h1>
+<h2 class="text-center mb-4 pacifico-regular">Lista degli ordini</h2>
 
-<p  class="text-center my-4">
-    @Html.ActionLink("Aggiungi ordine", "Create",null, new { @class = "btn btn-primary btn-lg" })
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Users.Nome)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Users.Cognome)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Indirizzo)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Note)
-        </th>
-        <th>
-            Costo Consegna
-        </th>
-        <th></th>
-    </tr>
+<div class="text-center mb-3 pacifico-regular">
+    @Html.ActionLink("Crea Nuovo", "Create", null, new { @class = "btn btn-primary" })
+</div>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Users.Nome)
-        </td>
-        <th>
-            @Html.DisplayFor(modelItem => item.Users.Cognome)
-        </th>
-        <td>
-            @Html.DisplayFor(modelItem => item.Indirizzo)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Note)
-        </td>
-        <td>
-            @Html.ActionLink("Modifica", "Edit", new { id = item.Ordine_ID }, new { @class = "btn btn-info mx-1" }) |
-            @Html.ActionLink("Elimina", "Delete", new { id = item.Ordine_ID }, new { @class = "btn btn-danger mx-1" }) |
-            <button onclick="window.location.href='/OrdArts/Details/@item.Ordine_ID'" class="btn btn-primary mx-1">Dettagli</button>
-        </td>
-    </tr>
-}
-
-</table>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th class="text-center">Nome Cliente</th>
+                            <th class="text-center">Cognome Cliente</th>
+                            <th class="text-center">Indirizzo</th>
+                            <th class="text-center">Note</th>
+                            <th class="text-center">Stato</th>
+                            <th class="text-center">Costo Consegna</th>
+                            <th class="text-center">Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-center">@Html.DisplayFor(modelItem => item.Users.Nome)</td>
+                                <td class="text-center">@Html.DisplayFor(modelItem => item.Users.Cognome)</td>
+                                <td class="text-center">@Html.DisplayFor(modelItem => item.Indirizzo)</td>
+                                <td class="text-center">@Html.DisplayFor(modelItem => item.Note)</td>
+                                <td class="text-center">@Html.DisplayFor(modelItem => item.Stato)</td>
+                                <td class="text-center">@Html.DisplayFor(modelItem => item.CostoCons) €</td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group" aria-label="Actions">
+                                        @Html.ActionLink("Dettagli", "Details", "OrdArts", new { id = item.Ordine_ID }, new { @class = "btn btn-primary btn-sm" })
+                                        @Html.ActionLink("Modifica", "Edit", new { id = item.Ordine_ID }, new { @class = "btn btn-info btn-sm mx-2" })
+                                        @Html.ActionLink("Elimina", "Delete", new { id = item.Ordine_ID }, new { @class = "btn btn-danger btn-sm" })
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

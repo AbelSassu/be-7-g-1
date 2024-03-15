@@ -4,7 +4,7 @@
     ViewBag.Title = "Edit";
 }
 
-<h2 class="my-4">Modifica ordine</h2>
+<h2>Edit</h2>
 
 
 @using (Html.BeginForm())
@@ -12,12 +12,13 @@
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
+        <h4>Ordini</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Ordine_ID)
         @Html.HiddenFor(model => model.User_ID)
 
-        <div class="form-group my-3">
+        <div class="form-group">
             @Html.LabelFor(model => model.Indirizzo, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Indirizzo, new { htmlAttributes = new { @class = "form-control" } })
@@ -25,7 +26,7 @@
             </div>
         </div>
 
-        <div class="form-group my-3">
+        <div class="form-group">
             @Html.LabelFor(model => model.Note, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Note, new { htmlAttributes = new { @class = "form-control" } })
@@ -33,7 +34,7 @@
             </div>
         </div>
 
-        <div class="form-group my-3">
+        <div class="form-group">
             @Html.LabelFor(model => model.CostoCons, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.CostoCons, new { htmlAttributes = new { @class = "form-control" } })
@@ -41,7 +42,7 @@
             </div>
         </div>
 
-        <div class="form-group my-3">
+        <div class="form-group">
             @Html.LabelFor(model => model.Totale, "Totale", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Totale, new { htmlAttributes = new { @class = "form-control" } })
@@ -49,7 +50,7 @@
             </div>
         </div>
 
-        <div class="form-group my-3">
+        <div class="form-group">
             @Html.LabelFor(model => model.Stato, "Stato", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("Stato", new SelectList(new[]
@@ -62,7 +63,7 @@
         </div>
 
 
-        <div class="form-group my-3">
+        <div class="form-group">
             @Html.LabelFor(model => model.Data, "Data", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Data, new { htmlAttributes = new { @class = "form-control", type = "datetime-local" } })
@@ -70,16 +71,16 @@
             </div>
         </div>
 
-        <div class="form-group my-3">
-            <div class="col-md-offset-2 col-md-10 my-3">
-                <input type="submit" value="Modifica" class="btn btn-primary" />
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10 my-2">
+                <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </div>
     </div>
 }
 
 <div>
-    @Html.ActionLink("Torna agli ordini", "Index")
+    @Html.ActionLink("Torna alla Home", "Index")
 </div>
 
 @section Scripts {
