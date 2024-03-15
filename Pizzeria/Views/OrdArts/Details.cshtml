@@ -4,14 +4,14 @@
     ViewBag.Title = "Dettagli Ordine";
 }
 
-<h2>Dettagli Ordine</h2>
+<h2 class="my-4">Dettagli Ordine</h2>
 
 
 <p><strong>Nome:</strong> @Model[0].Ordini.Users.Nome</p>
 <p><strong>Cognome:</strong> @Model[0].Ordini.Users.Cognome</p>
 <p><strong>Indirizzo:</strong> @Model[0].Ordini.Indirizzo</p>
 <p><strong>Note:</strong> @Model[0].Ordini.Note</p>
-<p><strong>Costo Consegna:</strong> @Model[0].Ordini.CostoCons</p>
+<p><strong>Costo Consegna: € </strong> @Model[0].Ordini.CostoCons</p>
 
 
 
@@ -30,23 +30,23 @@
             {
                 <tr>
                     <td>@item.Articoli.Nome</td>
-                    <td>@item.Quantita</td>
-                    <td>@item.Articoli.Prezzo</td>
-                    <td><a href="/OrdArts/Edit/@item.Articolo_ID/@item.Ordine_ID" class="btn btn-outline-info"></a></td>
+                    <td>@item.Quantita pz.</td>
+                    <td>€ @item.Articoli.Prezzo</td>
                 </tr>
             }
             <tr>
-
-
-                <td colspan="2"><strong>Prezzo Totale:</strong></td>
-                <td>
-                    @(Model.Sum(item => (item.Articoli.Prezzo * item.Quantita)) + Model.FirstOrDefault().Ordini.CostoCons)
+                <td style="height:75px; vertical-align: bottom;" colspan="2"><strong>Prezzo Totale:</strong></td>
+                <td style="vertical-align: bottom;">
+                    € @(Model.Sum(item => (item.Articoli.Prezzo * item.Quantita)) + Model.FirstOrDefault().Ordini.CostoCons)
                 </td>
-
-
             </tr>
+
         </tbody>
     </table>
+    <div>
+        <a href="/Ordini/Details/@User.Identity.Name" class="btn btn-outline-primary my-3">Torna allo Storico</a>
+    </div>
+
 }
 else
 {

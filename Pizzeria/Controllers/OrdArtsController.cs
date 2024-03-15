@@ -186,32 +186,43 @@ namespace Pizzeria.Controllers
         [HttpPost]
         [Authorize(Roles = "Cliente")]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateOrderFromCart(OrdArt ordArt)
+        public ActionResult CreateOrderFromCart(Ordini ordArt)
         {
             if (ModelState.IsValid)
             {
-                ordArt.Ordini.CostoCons = 4;
-                ordArt.Ordini.User_ID = Convert.ToInt32(User.Identity.Name);
-                db.Ordini.Add(ordArt.Ordini);
-                db.SaveChanges();
 
-                int newOrdineID = ordArt.Ordini.Ordine_ID;
+
+                ordArt.CostoCons = 4;
+                ordArt.Stato = "Preparazione";
+                ordArt.Data = DateTime.Today;
+                var cartJson = HttpUtility.UrlDecode(Request.Cookies["Carrello" + User.Identity.Name]["User"]);
+                var userId = Convert.ToInt32(User.Identity.Name);
+
+                // Decodifica il valore del cookie e riempie la lista
+                var artsCart = JsonConvert.DeserializeObject<List<ArtCart>>(cartJson);
+
 
                 List<ArtCart> userArtCart = new List<ArtCart>();
+                // Filtra solo gli articoli relativi all'utente attuale
+                userArtCart = artsCart.Where(a => a.User_Id == userId).ToList();
 
-                // Verifica se il cookie "Carrello" esiste già
-                if (Request.Cookies["Carrello" + User.Identity.Name] != null && Request.Cookies["Carrello" + User.Identity.Name]["User"] != null)
+                decimal totale = 0;
+
+                foreach (var art in userArtCart)
                 {
-                    var cartJson = HttpUtility.UrlDecode(Request.Cookies["Carrello" + User.Identity.Name]["User"]);
-                    var userId = Convert.ToInt32(User.Identity.Name);
-
-                    // Decodifica il valore del cookie e riempie la lista
-                    var artsCart = JsonConvert.DeserializeObject<List<ArtCart>>(cartJson);
-
-                    // Filtra solo gli articoli relativi all'utente attuale
-                    userArtCart = artsCart.Where(a => a.User_Id == userId).ToList();
-                    ViewBag.UserCart = userArtCart;
+                    totale += (art.Quantita * art.Articolo.Prezzo);
                 }
+                ordArt.Totale = totale;
+
+                ordArt.User_ID = Convert.ToInt32(User.Identity.Name);
+                db.Ordini.Add(ordArt);
+                db.SaveChanges();
+
+                int newOrdineID = ordArt.Ordine_ID;
+
+
+                ViewBag.UserCart = userArtCart;
+
 
                 foreach (var art in userArtCart)
                 {
@@ -235,6 +246,7 @@ namespace Pizzeria.Controllers
                 return RedirectToAction("Details", "OrdArts", new { id = newOrdineID });
             }
             return RedirectToAction("Cart");
+
         }
 
         [HttpPost]

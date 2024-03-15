@@ -1,13 +1,12 @@
 ﻿@model Pizzeria.Models.Articoli
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Dettagli articolo";
 }
 
-<h2>Details</h2>
+<h2>Dettaglio articolo</h2>
 
 <div>
-    <h4>Articoli</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -31,7 +30,7 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Prezzo)
+            @Html.DisplayFor(model => model.Prezzo) €
         </dd>
 
         <dt>
@@ -55,8 +54,8 @@
 <p>
     @if (User.IsInRole("Amministratore"))
     {
-        @Html.ActionLink("Edit", "Edit", new { id = Model.Articolo_ID })
-        @Html.ActionLink("Back to List", "Index")
+        @Html.ActionLink("Vai alla modifica del prodotto", "Edit", new { id = Model.Articolo_ID }, new { @class = "d-block my-3" })
+        @Html.ActionLink("Torna al Menù", "Index")
     }
 
 </p>

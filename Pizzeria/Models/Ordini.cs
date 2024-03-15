@@ -25,16 +25,17 @@ namespace Pizzeria.Models
         [StringLength(250)]
         public string Note { get; set; }
 
-        [Required]
-        [DataType(DataType.DateTime)]
-        public DateTime Data { get; set; }
 
-        [Required]
+        [DataType(DataType.DateTime)]
+        public DateTime? Data { get; set; }
+
+
         [StringLength(50)]
         public string Stato { get; set; }
 
-        [Required]
-        public decimal Totale { get; set; }
+
+        public decimal? Totale { get; set; }
+
 
         public decimal? CostoCons { get; set; }
 

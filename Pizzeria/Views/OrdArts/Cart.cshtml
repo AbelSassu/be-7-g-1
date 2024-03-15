@@ -1,4 +1,4 @@
-﻿@model Pizzeria.Models.OrdArt
+﻿@model Pizzeria.Models.Ordini
 
 <h2 class="text-center my-4">Carrello</h2>
 @if (ViewBag.UserCart != null && ViewBag.UserCart.Count > 0)
@@ -7,17 +7,17 @@
         <div>
             <table>
                 <tr>
-                    <th style="width: 150px;">Nome</th>
-                    <th style="width: 100px;">Prezzo</th>
-                    <th style="width: 100px;">Quantità</th>
-                    <th style="width: 100px;">Rimuovi</th>
+                    <th style="width:200px; height:50px">Nome</th>
+                    <th style="width:100px">Prezzo</th>
+                    <th style="width:100px">Quantità</th>
+                    <th style="width:100px">Rimuovi</th>
                 </tr>
                 @foreach (var item in ViewBag.UserCart)
                 {
                     <tr>
-                        <td style="width: 200px;">@item.Articolo.Nome</td>
-                        <td style="width: 100px;">@item.Articolo.Prezzo €</td>
-                        <td style="width: 130px;">
+                        <td>@item.Articolo.Nome</td>
+                        <td>@item.Articolo.Prezzo €</td>
+                        <td>
                             @using (Html.BeginForm("AggiornaQuantita", "OrdArts", FormMethod.Post))
                             {
                                 <input type="hidden" name="articoloId" value="@item.Articolo.Articolo_ID" />
@@ -26,7 +26,7 @@
                                 <button type="submit" name="operazione" value="decrementa" class="btn btn-outline-primary">-</button>
                             }
                         </td>
-                        <td style="width: 100px;">
+                        <td>
                             @using (Html.BeginForm("RimuoviDallCarrello", "OrdArts", FormMethod.Post))
                             {
                                 <input type="hidden" name="articoloId" value="@item.Articolo.Articolo_ID" />
@@ -36,11 +36,10 @@
                     </tr>
                 }
             </table>
-
-            <div class="mt-5">
+            <div>
                 @using (Html.BeginForm("SvuotaCarrello", "OrdArts", FormMethod.Post))
                 {
-                    <input type="submit" value="Svuota Carrello" class="btn btn-outline-danger" />
+                    <input type="submit" value="Svuota Carrello" class="btn btn-outline-danger mt-4" />
                 }
             </div>
         </div>
@@ -50,26 +49,47 @@
                 @Html.AntiForgeryToken()
 
                 <div class="form-horizontal">
-                    <h4 class="mb-3">Ordina</h4>
-
+                    <h3 class="mb-4">Ordina</h3>
+                    @Html.HiddenFor(model => model.Ordine_ID)
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    <div class="form-group mb-4">
-                        @Html.LabelFor(model => model.Ordini.Indirizzo, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Indirizzo, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.Ordini.Indirizzo, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.Ordini.Indirizzo, "", new { @class = "text-danger" })
+                            @Html.EditorFor(model => model.Indirizzo, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Indirizzo, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group visually-hidden">
+                        @Html.LabelFor(model => model.Stato, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Stato, new { htmlAttributes = new { @class = "form-control", @value = "Preparazione" } })
+                            @Html.ValidationMessageFor(model => model.Stato, "", new { @class = "text-danger" })
                         </div>
                     </div>
 
-                    <div class="form-group mb-4">
-                        @Html.LabelFor(model => model.Ordini.Note, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="form-group visually-hidden">
+                        @Html.LabelFor(model => model.Data, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.Ordini.Note, new { htmlAttributes = new { @class = "form-control" } })
-                            @Html.ValidationMessageFor(model => model.Ordini.Note, "", new { @class = "text-danger" })
+                            @Html.EditorFor(model => model.Data, new { htmlAttributes = new { @class = "form-control", @value = DateTime.Today } })
+                            @Html.ValidationMessageFor(model => model.Data, "", new { @class = "text-danger" })
                         </div>
                     </div>
 
+                    <div class="form-group visually-hidden">
+                        @Html.LabelFor(model => model.Totale, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Totale, new { htmlAttributes = new { @class = "form-control", @value = 0 } })
+                            @Html.ValidationMessageFor(model => model.Totale, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
 
+                    <div class="form-group mt-3">
+                        @Html.LabelFor(model => model.Note, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(model => model.Note, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Note, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
 
                     <div class="form-group my-4">
                         <div class="col-md-offset-2 col-md-10">
@@ -78,6 +98,7 @@
                     </div>
                 </div>
             }
+
         </div>
     </div>
 }

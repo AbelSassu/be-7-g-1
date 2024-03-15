@@ -73,11 +73,9 @@
                     @if (User.IsInRole("Amministratore"))
                     {
                         <li class="nav-item">@Html.ActionLink("Ordini", "Index", "Ordini", new { area = "" }, new { @class = "nav-link mx-2" })</li>
-                        <li class="nav-item">@Html.ActionLink("Articoli", "Index", "Articoli", new { area = "" }, new { @class = "nav-link" })</li>
                     }
                     else if (User.IsInRole("Cliente"))
                     {
-                        <li class="nav-item">@Html.ActionLink("Ordina ora", "Create", "Ordini", new { area = "" }, new { @class = "nav-link mx-2" })</li>
                         <li class="nav-item">@Html.ActionLink("Storico", "Details", "Ordini", new { id = User.Identity.Name }, new { @class = "nav-link me-2" })</li>
                         <li class="nav-item">@Html.ActionLink("Carrello", "Cart", "OrdArts", new { area = "" }, new { @class = "nav-link" })</li>
                     }
@@ -110,7 +108,7 @@
                             <h5>Contatti</h5>
                             <p>Piazza Garibaldi, 12</p>
                             <p>Telefono: 079/797979</p>
-                            <p>Email: Inforno@pizzeria.com</p>
+                            <p>Email: Ignagno@pizzeria.com</p>
                         </div>
                         <div class="col-md-4">
                             <h5>Orari</h5>
@@ -127,7 +125,7 @@
                     </div>
                     <hr class="bg-white" />
                     <div class="text-center">
-                        <p>&copy; @DateTime.Now.Year - Pizzeria In Forno</p>
+                        <p>&copy; @DateTime.Now.Year - Pizza Garibaldi</p>
                     </div>
                 </div>
             </footer>

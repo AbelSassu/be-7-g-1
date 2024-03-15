@@ -63,7 +63,7 @@ namespace Pizzeria.Controllers
                 }
                 else
                 {
-                    TempData["message"] = "L'email esiste già";
+                    TempData["message"] = "Account già presente nel database";
                     return View(users);
                 }
             }
