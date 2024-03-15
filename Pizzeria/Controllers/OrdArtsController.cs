@@ -43,15 +43,6 @@ namespace Pizzeria.Controllers
             }
 
             return View(ordineWithArticoli);
-
-            //var ArtOrderId = db.OrdArt.Where(u => u.Ordine_ID == orderId).ToList();
-            //Ordini ordini = db.Ordini.Find(orderId);
-            //if (ArtOrderId == null || ordini == null)
-            //{
-            //    return HttpNotFound();
-            //}
-            //TempData["ordineDetails"] = ordini;
-            //return View(ArtOrderId);
         }
 
         // GET: OrdArts/Create
@@ -95,34 +86,248 @@ namespace Pizzeria.Controllers
             return View(ordArt);
         }
 
-        //Crea Cookie Carrello
+        // Crea Cookie Carrello
         [HttpPost]
+        [Authorize(Roles = "Cliente")]
         public ActionResult AddToCart(int? id)
         {
-            List<Articoli> artCart;
-
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             var articolo = db.Articoli.FirstOrDefault(o => o.Articolo_ID == id);
-            if (Request.Cookies["Carrello"] != null)
+            if (articolo == null)
             {
-                var cartJson = HttpUtility.UrlDecode(Request.Cookies["Carrello"].Value);
-                artCart = JsonConvert.DeserializeObject<List<Articoli>>(cartJson);
+                return HttpNotFound();
             }
-            artCart = new List<Articoli>
+
+            // Inizializza artsCart
+            List<ArtCart> artsCart = new List<ArtCart>();
+
+            // Creazione del cookie
+            HttpCookie cartCookie;
+
+            // Verifica se il cookie "Carrello" esiste già
+            if (Request.Cookies["Carrello" + User.Identity.Name] != null && Request.Cookies["Carrello" + User.Identity.Name]["User"] != null)
             {
-                articolo
-            };
-            var jsonCart = JsonConvert.SerializeObject(artCart);
-            var cartCookie = new HttpCookie("Carrello", HttpUtility.UrlEncode(jsonCart));
+                // Se esiste, aggiorna direttamente il valore
+                cartCookie = Request.Cookies["Carrello" + User.Identity.Name];
+                // Decodifica il valore del cookie e riempie la lista
+                var cartJson = HttpUtility.UrlDecode(Request.Cookies["Carrello" + User.Identity.Name]["User"]);
+                artsCart = JsonConvert.DeserializeObject<List<ArtCart>>(cartJson);
+            }
+            else
+            {
+                // Altrimenti, crea un nuovo cookie solo se non esiste già
+                cartCookie = new HttpCookie("Carrello" + User.Identity.Name);
+                cartCookie.Values["User"] = User.Identity.Name;
+            }
+            // Verifica se l'articolo è già presente nel carrello
+            var existingCartItem = artsCart.FirstOrDefault(item => item.Articolo.Articolo_ID == articolo.Articolo_ID);
+            if (existingCartItem != null)
+            {
+                // Se l'articolo è già presente, incrementa la quantità
+                existingCartItem.Quantita++;
+            }
+            else
+            {
+                // Aggiungi l'articolo al carrello
+                var artCart = new ArtCart()
+                {
+                    Articolo = new Articoli()
+                    {
+                        Articolo_ID = articolo.Articolo_ID,
+                        Nome = articolo.Nome,
+                        Prezzo = articolo.Prezzo,
+                        Img = articolo.Img,
+                        Tempo_Cons = articolo.Tempo_Cons,
+                        Ingredienti = articolo.Ingredienti,
+                    },
+                    Quantita = 1,
+                    User_Id = Convert.ToInt32(User.Identity.Name),
+                };
+                artsCart.Add(artCart);
+            }
+
+            // Serializza la lista e aggiorna il valore del cookie
+            cartCookie["User"] = HttpUtility.UrlEncode(JsonConvert.SerializeObject(artsCart));
+            cartCookie.Expires = DateTime.Now.AddDays(1);
+
+            // Aggiunge o aggiorna il cookie nella risposta
+            Response.Cookies.Add(cartCookie);
+
+            return RedirectToAction("Index", "Articoli");
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Cliente")]
+        public ActionResult Cart()
+        {
+            List<ArtCart> userArtCart = new List<ArtCart>();
+
+            // Verifica se il cookie "Carrello" esiste già
+            if (Request.Cookies["Carrello" + User.Identity.Name] != null && Request.Cookies["Carrello" + User.Identity.Name]["User"] != null)
+            {
+                var cartJson = HttpUtility.UrlDecode(Request.Cookies["Carrello" + User.Identity.Name]["User"]);
+                var userId = Convert.ToInt32(User.Identity.Name);
+
+                // Decodifica il valore del cookie e riempie la lista
+                var artsCart = JsonConvert.DeserializeObject<List<ArtCart>>(cartJson);
+
+                // Filtra solo gli articoli relativi all'utente attuale
+                userArtCart = artsCart.Where(a => a.User_Id == userId).ToList();
+                ViewBag.UserCart = userArtCart;
+            }
 
             return View();
         }
 
-            // GET: OrdArts/Edit/5
-            [Authorize(Roles = "Amministratore,Cliente")]
+        [HttpPost]
+        [Authorize(Roles = "Cliente")]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateOrderFromCart(OrdArt ordArt)
+        {
+            if (ModelState.IsValid)
+            {
+                ordArt.Ordini.CostoCons = 4;
+                ordArt.Ordini.User_ID = Convert.ToInt32(User.Identity.Name);
+                db.Ordini.Add(ordArt.Ordini);
+                db.SaveChanges();
+
+                int newOrdineID = ordArt.Ordini.Ordine_ID;
+
+                List<ArtCart> userArtCart = new List<ArtCart>();
+
+                // Verifica se il cookie "Carrello" esiste già
+                if (Request.Cookies["Carrello" + User.Identity.Name] != null && Request.Cookies["Carrello" + User.Identity.Name]["User"] != null)
+                {
+                    var cartJson = HttpUtility.UrlDecode(Request.Cookies["Carrello" + User.Identity.Name]["User"]);
+                    var userId = Convert.ToInt32(User.Identity.Name);
+
+                    // Decodifica il valore del cookie e riempie la lista
+                    var artsCart = JsonConvert.DeserializeObject<List<ArtCart>>(cartJson);
+
+                    // Filtra solo gli articoli relativi all'utente attuale
+                    userArtCart = artsCart.Where(a => a.User_Id == userId).ToList();
+                    ViewBag.UserCart = userArtCart;
+                }
+
+                foreach (var art in userArtCart)
+                {
+                    var newOrdArt = new OrdArt();  // Create a new instance of OrdArt for each ArtCart item
+                    newOrdArt.Articolo_ID = art.Articolo.Articolo_ID;
+                    newOrdArt.Ordine_ID = newOrdineID;
+                    newOrdArt.Quantita = Convert.ToInt32(art.Quantita);
+                    db.OrdArt.Add(newOrdArt);  // Add the new instance to the database context
+                }
+
+                db.SaveChanges();
+
+                // Rimuovi il cookie del carrello per l'utente corrente
+                HttpCookie userCookie = Request.Cookies["Carrello" + User.Identity.Name];
+                if (userCookie != null)
+                {
+                    userCookie.Expires = DateTime.Now.AddDays(-1);
+                    Response.Cookies.Add(userCookie);
+                }
+
+                return RedirectToAction("Details", "OrdArts", new { id = newOrdineID });
+            }
+            return RedirectToAction("Cart");
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Cliente")]
+        public ActionResult SvuotaCarrello()
+        {
+            // Rimuovi il cookie del carrello per l'utente corrente
+            HttpCookie userCookie = Request.Cookies["Carrello" + User.Identity.Name];
+            if (userCookie != null)
+            {
+                userCookie.Expires = DateTime.Now.AddDays(-1);
+                Response.Cookies.Add(userCookie);
+            }
+
+            return RedirectToAction("Cart");
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Cliente")]
+        public ActionResult RimuoviDallCarrello(int articoloId)
+        {
+            var userName = User.Identity.Name;
+
+            // Recupera l'elenco degli articoli attualmente nel carrello dal cookie
+            var cartCookie = Request.Cookies["Carrello" + userName];
+            if (cartCookie == null || cartCookie["User"] == null)
+            {
+                // Il carrello è vuoto, non è necessario fare nulla
+                return RedirectToAction("Cart");
+            }
+
+            var cartJson = HttpUtility.UrlDecode(cartCookie["User"]);
+            var artsCart = JsonConvert.DeserializeObject<List<ArtCart>>(cartJson);
+
+            // Rimuove l'articolo con l'ID specificato dall'elenco degli articoli nel carrello
+            artsCart.RemoveAll(a => a.Articolo.Articolo_ID == articoloId);
+
+            // Aggiorna il cookie del carrello con l'elenco aggiornato degli articoli
+            if (artsCart.Any())
+            {
+                cartCookie.Values["User"] = HttpUtility.UrlEncode(JsonConvert.SerializeObject(artsCart));
+                cartCookie.Expires = DateTime.Now.AddDays(1);
+            }
+            else
+            {
+                // Se il carrello è vuoto, elimina completamente il cookie
+                cartCookie.Expires = DateTime.Now.AddDays(-1);
+            }
+            Response.Cookies.Add(cartCookie);
+
+            // Reindirizza alla vista del carrello aggiornata
+            return RedirectToAction("Cart");
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Cliente")]
+        public ActionResult AggiornaQuantita(int articoloId, string operazione)
+        {
+            // Recupera l'elenco degli articoli attualmente nel carrello dal cookie
+            var artsCart = new List<ArtCart>();
+            if (Request.Cookies["Carrello" + User.Identity.Name] != null && Request.Cookies["Carrello" + User.Identity.Name]["User"] != null)
+            {
+                var cartJson = HttpUtility.UrlDecode(Request.Cookies["Carrello" + User.Identity.Name]["User"]);
+                artsCart = JsonConvert.DeserializeObject<List<ArtCart>>(cartJson);
+            }
+
+            // Trova l'articolo con l'ID specificato nell'elenco
+            var articolo = artsCart.FirstOrDefault(a => a.Articolo.Articolo_ID == articoloId);
+            if (articolo != null)
+            {
+                // Aggiorna la quantità in base all'operazione
+                if (operazione == "incrementa")
+                {
+                    articolo.Quantita++;
+                }
+                else if (operazione == "decrementa" && articolo.Quantita > 1)
+                {
+                    articolo.Quantita--;
+                }
+            }
+
+            // Aggiorna il cookie del carrello con l'elenco aggiornato degli articoli
+            var cartCookie = new HttpCookie("Carrello" + User.Identity.Name);
+            cartCookie.Values["User"] = HttpUtility.UrlEncode(JsonConvert.SerializeObject(artsCart));
+            cartCookie.Expires = DateTime.Now.AddDays(1);
+            Response.Cookies.Add(cartCookie);
+
+            // Reindirizza alla vista del carrello aggiornata
+            return RedirectToAction("Cart");
+        }
+
+        // GET: OrdArts/Edit/5
+        [Authorize(Roles = "Amministratore,Cliente")]
         public ActionResult Edit(int? articoloId, int? ordineId)
         {
             if (articoloId == null || ordineId == null)
@@ -146,6 +351,8 @@ namespace Pizzeria.Controllers
 
             return View(ordArt);
         }
+
+
 
         // POST: OrdArts/Edit/5
         // Per la protezione da attacchi di overposting, abilitare le proprietà a cui eseguire il binding. 

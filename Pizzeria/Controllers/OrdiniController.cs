@@ -18,7 +18,7 @@ namespace Pizzeria.Controllers
         [Authorize(Roles = "Amministratore")]
         public ActionResult Index()
         {
-            var ordini = db.Ordini.Include(o => o.Users);
+            var ordini = db.Ordini.Include(o => o.Users).OrderByDescending(o => o.Ordine_ID);
             return View(ordini.ToList());
         }
 
@@ -65,6 +65,7 @@ namespace Pizzeria.Controllers
         // Per la protezione da attacchi di overposting, abilitare le proprietà a cui eseguire il binding. 
         // Per altri dettagli, vedere https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Cliente, Amministratore")]
         [ValidateAntiForgeryToken]
         public ActionResult Create(OrdArt ordArt)
         {
@@ -81,7 +82,6 @@ namespace Pizzeria.Controllers
 
                 return RedirectToAction("Details", "OrdArt", new { id = newOrdineID} );
             }
-
             return View(ordArt);
         }
 

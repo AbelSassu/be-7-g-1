@@ -1,65 +1,136 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>@ViewBag.Title - Applicazione ASP.NET</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="https://image.similarpng.com/very-thumbnail/2021/12/Pizza-logo-isolated-on-transparent-background-PNG.png" type="image/x-icon">
+    <title>@ViewBag.Title - Pizzeria Garibaldi</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-***" crossorigin="anonymous" />
+
+
+    <style>
+        /* Navbar */
+        .navbar {
+            background: rgb(15,174,0);
+            background: linear-gradient(86deg, rgba(15,174,0,1) 17%, rgba(255,255,255,1) 53%, rgba(251,36,36,1) 88%);
+        }
+
+        .nav-link {
+            color: #fff !important;
+        }
+
+            .nav-link:hover {
+                color: #ce2b37 !important; /* Rosso */
+            }
+
+        .navbar-brand {
+            color: #fff !important;
+        }
+
+            .navbar-brand:hover {
+                color: #ce2b37 !important; /* Rosso */
+            }
+
+        .btnav {
+            background-color: rgb(15, 174, 0);
+            transition: background-color 1.2s ease;
+        }
+
+            .btnav:hover {
+                transition: background-color 1.2s ease;
+                background: linear-gradient(86deg, rgba(15, 174, 0, 1) 17%, rgba(255, 255, 255, 1) 53%, rgba(251, 36, 36, 1) 88%);
+            }
+
+        /* Footer */
+        footer {
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+            footer a {
+                color: #fff;
+            }
+    </style>
 </head>
 <body>
-
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark">
         <div class="container">
-            @Html.ActionLink("In Forno", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Attiva/Disattiva spostamento" aria-controls="navbarSupportedContent"
+            <!-- Aggiungi un logo come immagine nella navbar-brand -->
+            <a class="navbar-brand" href="@Url.Action("Index", "Home")">
+                <img src="https://d1csarkz8obe9u.cloudfront.net/posterpreviews/pizzeria-restaurant-logo-design-template-220e91d20f43c0d3cec8f3732b11c0ad_screen.jpg?ts=1597302428" alt="Logo" class="navbar-logo me-3" width="50" height="50" /> <!-- Imposta le dimensioni desiderate -->
+                Pizza Garibaldi
+            </a>
+            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
+                <ul class="navbar-nav">
                     @if (User.IsInRole("Amministratore"))
                     {
-                        <li>@Html.ActionLink("Ordini", "Index", "Ordini", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("Articoli", "Index", "Articoli", new { id = User.Identity.Name }, new { @class = "nav-link" })</li>
+                        <li class="nav-item">@Html.ActionLink("Ordini", "Index", "Ordini", new { area = "" }, new { @class = "nav-link mx-2" })</li>
+                        <li class="nav-item">@Html.ActionLink("Articoli", "Index", "Articoli", new { area = "" }, new { @class = "nav-link" })</li>
                     }
                     else if (User.IsInRole("Cliente"))
                     {
-                        <li>@Html.ActionLink("Crea ordine", "Create", "Ordini", new { area = "" }, new { @class = "nav-link" })</li>
-                        <li>@Html.ActionLink("I tuoi ordini", "Details", "Ordini", new { id = User.Identity.Name }, new { @class = "nav-link" })</li>
+                        <li class="nav-item">@Html.ActionLink("Ordina ora", "Create", "Ordini", new { area = "" }, new { @class = "nav-link mx-2" })</li>
+                        <li class="nav-item">@Html.ActionLink("Storico", "Details", "Ordini", new { id = User.Identity.Name }, new { @class = "nav-link me-2" })</li>
+                        <li class="nav-item">@Html.ActionLink("Carrello", "Cart", "OrdArts", new { area = "" }, new { @class = "nav-link" })</li>
                     }
-                    else
-                    {
-                        <li>@Html.ActionLink("Logga per poter ordinare", "Index", "Help", new { area = "" }, new { @class = "nav-link" })</li>
-                    }
-
-
                 </ul>
-                @if (User.IsInRole("Amministratore"))
-                {
-                    <p class="text-info">Benvenuto amministratore</p>
-                }
-                <ul class="text-white navbar-nav">
+                <ul class="navbar-nav ml-auto">
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <li>@Html.ActionLink("Logout", "Logout", "Auth", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li class="nav-item">
+                            <button type="button" class="btn btn-success fw-bold btnav" onclick="location.href='@Url.Action("Logout", "Auth")'">Logout</button>
+                        </li>
                     }
                     else
                     {
-                        <li>@Html.ActionLink("Login", "Login", "Auth", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li class="nav-item">
+                            <button type="button" class="btn btn-success fw-bold btnav" onclick="location.href='@Url.Action("Login", "Auth")'">Login</button>
+                        </li>
                     }
-
                 </ul>
             </div>
         </div>
     </nav>
+
     <div class="container body-content">
         @RenderBody()
         <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - Applicazione ASP.NET</p>
-        </footer>
+            <footer class="bg-dark text-white mt-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h5>Contatti</h5>
+                            <p>Piazza Garibaldi, 12</p>
+                            <p>Telefono: 079/797979</p>
+                            <p>Email: Inforno@pizzeria.com</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h5>Orari</h5>
+                            <p>Martedì - Domenica: 12:30 - 14:00 / 19:30 - 22:00</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h5>Seguici sui social</h5>
+                            <p>
+                                <a href="#" class="text-white"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#" class="text-white mx-4"><i class="fab fa-instagram"></i></a>
+                                <a href="#" class="text-white"><i class="fab fa-twitter"></i></a>
+                            </p>
+                        </div>
+                    </div>
+                    <hr class="bg-white" />
+                    <div class="text-center">
+                        <p>&copy; @DateTime.Now.Year - Pizzeria In Forno</p>
+                    </div>
+                </div>
+            </footer>
     </div>
 
     @Scripts.Render("~/bundles/jquery")

@@ -4,7 +4,7 @@
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+<h2>Storico Ordini</h2>
 
 @foreach (var order in Model)
 {
@@ -46,9 +46,7 @@
 
         </dl>
     </div>
-    <div>
+    <div class="mb-5">
         <a href="/OrdArt/Details/@order.Ordine_ID" class="btn btn-outline-info">Prodotti acquistati</a>
     </div>
-        
-    <hr/>
 }
